@@ -388,9 +388,14 @@ class GraspSingleInSceneEnv(CustomSceneEnv):
         return self.obj.pose.transform(self.obj.cmass_local_pose)
 
     def _get_obs_extra(self) -> OrderedDict:
-        obs = OrderedDict(
-            tcp_pose=vectorize_pose(self.tcp.pose),
-        )
+        if hasattr(self, "tcp"):
+            obs = OrderedDict(
+                tcp_pose=vectorize_pose(self.tcp.pose),
+            )
+        else:
+            obs = OrderedDict(
+                {f"tcp{i}_pos": vectorize_pose(tcp.pose) for i, tcp in enumerate(self.tcps)}
+            )
         if self._obs_mode in ["state", "state_dict"]:
             obs.update(
                 obj_pose=vectorize_pose(self.obj_pose),

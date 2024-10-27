@@ -6,7 +6,7 @@ from mani_skill2_real2sim.sensors.camera import CameraConfig
 
 class ARX5DefaultConfig:
     def __init__(self, mobile_base=False, finger_friction=2.0, base_arm_drive_mode="force") -> None:
-        self.urdf_path = "{PACKAGE_ASSET_DIR}/descriptions/arx5_description/urdf/arx5_description_isaac.urdf"
+        self.urdf_path = "{PACKAGE_ASSET_DIR}/descriptions/arx5_description/arx5_description_isaac.urdf"
 
         finger_min_patch_radius = 0.01
         self.urdf_config = dict(
@@ -14,120 +14,89 @@ class ARX5DefaultConfig:
                 gripper=dict(static_friction=2.0, dynamic_friction=2.0, restitution=0.0)
             ),
             link=dict(
-                left_finger_link=dict(
+                fl_link7=dict(
                     material="gripper",
                     patch_radius=finger_min_patch_radius,
                     min_patch_radius=finger_min_patch_radius,
                 ),
-                right_finger_link=dict(
+                fl_link8=dict(
+                    material="gripper",
+                    patch_radius=finger_min_patch_radius,
+                    min_patch_radius=finger_min_patch_radius,
+                ),
+                fr_link7=dict(
+                    material="gripper",
+                    patch_radius=finger_min_patch_radius,
+                    min_patch_radius=finger_min_patch_radius,
+                ),
+                fr_link8=dict(
                     material="gripper",
                     patch_radius=finger_min_patch_radius,
                     min_patch_radius=finger_min_patch_radius,
                 ),
             ),
         )
-        self.arm_joint_names = [
+        self.ee_link_names = []
+        self.arm_joints_dict = {}
+        self.ee_links_dict = {}
+        self.gripper_joints_dict = {}
+        self.arm_stiffness = 1e3
+        self.arm_damping = 1e2
+        self.arm_force_limit = 100
+        self.gripper_stiffness = 1e3
+        self.gripper_damping = 1e2
+        self.gripper_force_limit = 100
+
+        for prefix in ["fl", "fr"]:
+            arm_joints = []
+            for i in range(1, 7):
+                arm_joints.append(f"{prefix}_joint{i}")
+            self.arm_joints_dict[prefix] = arm_joints
+            self.ee_links_dict[prefix] = f"{prefix}_link6"
+            self.ee_link_names.append(f"{prefix}_link6")
+
+            gripper_joints = []
+            for i in range(7, 9):
+                gripper_joints.append(f"{prefix}_joint{i}")
+            self.gripper_joints_dict[prefix] = gripper_joints
             
-        ]
-        
+
     @property
     def controllers(self):
-        # -------------------------------------------------------------------------- #
-        # Arm
-        # -------------------------------------------------------------------------- #
-        arm_pd_joint_pos = PDJointPosControllerConfig(
-            self.arm_joint_names,
-            None,
-            None,
-            self.arm_stiffness,
-            self.arm_damping,
-            self.arm_force_limit,
-            normalize_action=False,
-        )
-        arm_pd_joint_delta_pos = PDJointPosControllerConfig(
-            self.arm_joint_names,
-            -0.1,
-            0.1,
-            self.arm_stiffness,
-            self.arm_damping,
-            self.arm_force_limit,
-            normalize_action=False,
-        )
-        arm_pd_joint_target_delta_pos = deepcopy(arm_pd_joint_delta_pos)
-        arm_pd_joint_target_delta_pos.use_target_delta = True
-        
-        # PD ee position
-        arm_pd_ee_delta_pos = PDEEPosControllerConfig(
-            self.arm_joint_names,
-            -0.1,
-            0.1,
-            self.arm_stiffness,
-            self.arm_damping,
-            self.arm_force_limit,
-            ee_link=self.ee_link_name,
-        )
-        arm_pd_ee_delta_pose = PDEEPoseControllerConfig(
-            self.arm_joint_names,
-            -0.1,
-            0.1,
-            0.1,
-            self.arm_stiffness,
-            self.arm_damping,
-            self.arm_force_limit,
-            ee_link=self.ee_link_name,
-        )
-
-        arm_pd_ee_target_delta_pos = deepcopy(arm_pd_ee_delta_pos)
-        arm_pd_ee_target_delta_pos.use_target = True
-        arm_pd_ee_target_delta_pose = deepcopy(arm_pd_ee_delta_pose)
-        arm_pd_ee_target_delta_pose.use_target = True
-        
-        # PD joint velocity
-        arm_pd_joint_vel = PDJointVelControllerConfig(
-            self.arm_joint_names,
-            -1.0,
-            1.0,
-            self.arm_damping,  # this might need to be tuned separately
-            self.arm_force_limit,
-        )
-        
-        # -------------------------------------------------------------------------- #
-        # Gripper
-        # -------------------------------------------------------------------------- #
-        # NOTE(jigu): IssacGym uses large P and D but with force limit
-        # However, tune a good force limit to have a good mimic behavior
-        gripper_pd_joint_pos = PDJointPosMimicControllerConfig(
-            self.gripper_joint_names,
-            -0.01,  # a trick to have force when the object is thin
-            0.04,
-            self.gripper_stiffness,
-            self.gripper_damping,
-            self.gripper_force_limit,
-        )
-
-        controller_configs = dict(
-            pd_joint_delta_pos=dict(
-                arm=arm_pd_joint_delta_pos, gripper=gripper_pd_joint_pos
-            ),
-            pd_joint_pos=dict(arm=arm_pd_joint_pos, gripper=gripper_pd_joint_pos),
-            pd_ee_delta_pos=dict(arm=arm_pd_ee_delta_pos, gripper=gripper_pd_joint_pos),
-            pd_ee_delta_pose=dict(
-                arm=arm_pd_ee_delta_pose, gripper=gripper_pd_joint_pos
-            ),
-            pd_joint_target_delta_pos=dict(
-                arm=arm_pd_joint_target_delta_pos, gripper=gripper_pd_joint_pos
-            ),
-            pd_ee_target_delta_pos=dict(
-                arm=arm_pd_ee_target_delta_pos, gripper=gripper_pd_joint_pos
-            ),
-            pd_ee_target_delta_pose=dict(
-                arm=arm_pd_ee_target_delta_pose, gripper=gripper_pd_joint_pos
-            ),
-            # Caution to use the following controllers
-            pd_joint_vel=dict(arm=arm_pd_joint_vel, gripper=gripper_pd_joint_pos),
-        )
 
         # Make a deepcopy in case users modify any config
+        arms_pd_ee_target_delta_pose = []
+        grippers_pd_jonit_pos = []
+        for prefix in ["fl", "fr"]:
+            arms_pd_ee_target_delta_pose.append(
+                PDEEPoseControllerConfig(
+                    self.arm_joints_dict[prefix],
+                    -0.1,
+                    0.1,
+                    self.arm_stiffness,
+                    self.arm_damping,
+                    self.arm_force_limit,
+                    ee_link=self.ee_links_dict[prefix],
+                )
+            )
+            grippers_pd_jonit_pos.append(
+                PDJointPosMimicControllerConfig(
+                    self.gripper_joints_dict[prefix],
+                    -0.01,
+                    0.04,
+                    self.gripper_stiffness,
+                    self.gripper_damping,
+                    self.gripper_force_limit,
+                )
+            )
+        controller_configs = dict(
+            pd_ee_target_delta_pose=dict(
+                left_arm=arms_pd_ee_target_delta_pose[0],
+                right_arm=arms_pd_ee_target_delta_pose[1],
+                left_gripper=grippers_pd_jonit_pos[0],
+                right_gripper=grippers_pd_jonit_pos[1],
+            )
+        )
         return deepcopy_dict(controller_configs)
     
     @property
@@ -136,7 +105,7 @@ class ARX5DefaultConfig:
             CameraConfig(
                 uid="front_camera",
                 p=[0, 0, 0],
-                q=[0, 0, 0, 1],
+                q=[1, 0, 0, 0],
                 width=384,
                 height=384,
                 fov=0.9599310885968813,
@@ -147,7 +116,7 @@ class ARX5DefaultConfig:
             CameraConfig(
                 uid="left_camera",
                 p=[0, 0, 0],
-                q=[0, 0, 0, 1],
+                q=[1, 0, 0, 0],
                 width=384,
                 height=384,
                 fov=0.9599310885968813,
@@ -158,7 +127,7 @@ class ARX5DefaultConfig:
             CameraConfig(
                 uid="right_camera",
                 p=[0, 0, 0],
-                q=[0, 0, 0, 1],
+                q=[1, 0, 0, 0],
                 width=384,
                 height=384,
                 fov=0.9599310885968813,

@@ -17,6 +17,7 @@ from mani_skill2_real2sim.agents.robots.googlerobot import (
 )
 from mani_skill2_real2sim.agents.robots.widowx import WidowX, WidowXBridgeDatasetCameraSetup, WidowXSinkCameraSetup
 from mani_skill2_real2sim.agents.robots.panda import Panda
+from mani_skill2_real2sim.agents.robots.arx5 import ARX5StaticBase
 from mani_skill2_real2sim.envs.sapien_env import BaseEnv
 from mani_skill2_real2sim.sensors.camera import CameraConfig
 from mani_skill2_real2sim.utils.sapien_utils import (
@@ -27,7 +28,9 @@ from mani_skill2_real2sim.utils.sapien_utils import (
 )
 
 class CustomSceneEnv(BaseEnv):
-    SUPPORTED_ROBOTS = {"google_robot_static": GoogleRobotStaticBase, 
+    SUPPORTED_ROBOTS = {
+                        "arx5": ARX5StaticBase,
+                        "google_robot_static": GoogleRobotStaticBase, 
                         "widowx": WidowX,
                         "widowx_bridge_dataset_camera_setup": WidowXBridgeDatasetCameraSetup,
                         "widowx_sink_camera_setup": WidowXSinkCameraSetup,
@@ -158,6 +161,8 @@ class CustomSceneEnv(BaseEnv):
                 scene_offset = np.array([-1.6616, -3.0337, 0.0]) # corresponds to the default offset of google_pick_coke_can_1_v4.glb
             elif 'widowx' in self.robot_uid:
                 scene_offset = np.array([-2.0634, -2.8313, 0.0])# corresponds to the default offset of bridge_table_1_v1.glb
+            elif 'arx5' in self.robot_uid:
+                scene_offset = np.array([0, 0, 0])
             else:
                 raise NotImplementedError(f"Default scene offset for {self.robot_uid} is not yet set")
         else:
@@ -252,9 +257,16 @@ class CustomSceneEnv(BaseEnv):
         self.agent = agent_cls(
             self._scene, self._control_freq, self._control_mode, config=self._agent_cfg
         )
-        self.tcp: sapien.Link = get_entity_by_name(
-            self.agent.robot.get_links(), self.agent.config.ee_link_name
-        ) # tool-center point, usually the midpoint between the gripper fingers
+        if hasattr(self.agent.config, "ee_link_name"):
+            self.tcp: sapien.Link = get_entity_by_name(
+                self.agent.robot.get_links(), self.agent.config.ee_link_name
+            ) # tool-center point, usually the midpoint between the gripper fingers
+        elif hasattr(self.agent.config, "ee_link_names"):
+            self.tcps: List[sapien.Link] = [
+                get_entity_by_name(self.agent.robot.get_links(), name) for name in self.agent.config.ee_link_names
+            ]
+        else:
+            raise NotImplementedError("ee_link_name or ee_link_names must be specified in the agent config.")
         if not self.disable_bad_material:
             set_articulation_render_material(self.agent.robot, specular=0.9, roughness=0.3)
             
@@ -290,6 +302,11 @@ class CustomSceneEnv(BaseEnv):
                 robot_init_height = 0.85
             else:
                 raise NotImplementedError(self.robot_uid)
+            robot_init_rot_quat = [0, 0, 0, 1]
+        elif 'arx5' in self.robot_uid:
+            qpos = np.array([-0.01840777,  0.0398835 + 1.57,  - 0.22242722 + 1.57,  -0.00460194 - 0.78,  -1.36524296 + 1.57 + 0.78,  0.00153398, 0.037, 0.037, 
+                             0.01840777,  0.0398835 + 1.57,  - 0.22242722 + 1.57,  -0.00460194 - 0.78,  1.36524296 - 1.57 - 0.78,  0.00153398, 0.037, 0.037,])
+            robot_init_height = 0.017
             robot_init_rot_quat = [0, 0, 0, 1]
         else:
             raise NotImplementedError(self.robot_uid)

@@ -81,7 +81,7 @@
         </collision>
     </link>
 
-    <joint name="right_wheel" type="continuous">
+    <joint name="right_wheel" type="fixed">
         <parent link="base_link"/>
         <child link="right_wheel_link"/>
         <origin xyz="0 -0.17 -0.082" rpy="0 0 0" />        
@@ -110,7 +110,7 @@
         </collision>
     </link>
 
-    <joint name="left_wheel" type="continuous">
+    <joint name="left_wheel" type="fixed">
         <parent link="base_link"/>
         <child link="left_wheel_link"/>
         <origin xyz="0 0.17 -0.082" rpy="0 0 0" />        
@@ -130,7 +130,7 @@
         </visual>
     </link>
 
-    <joint name="fl_castor_wheel" type="continuous">
+    <joint name="fl_castor_wheel" type="fixed">
         <parent link="base_link" />
         <child link="fl_castor_link" />
         <origin xyz="0.19 0.17 -0.038" rpy="-1.57 0 0" />        
@@ -150,7 +150,7 @@
         </visual>
     </link>
 
-    <joint name="fr_castor_wheel" type="continuous">
+    <joint name="fr_castor_wheel" type="fixed">
         <origin xyz="0.18955 -0.17 -0.0380886" rpy="-1.57 0 0" />
         <parent link="base_link" />
         <child link="fr_castor_link" />
@@ -170,7 +170,7 @@
         </visual>
     </link>
 
-    <joint name="rr_castor_wheel" type="continuous">
+    <joint name="rr_castor_wheel" type="fixed">
         <origin xyz="-0.18955 -0.17 -0.0380886" rpy="-1.57 0 0" />
         <parent link="base_link" />
         <child link="rr_castor_link" />
@@ -190,7 +190,7 @@
         </visual>
     </link>
 
-    <joint name="rl_castor_wheel" type="continuous">
+    <joint name="rl_castor_wheel" type="fixed">
         <origin xyz="-0.18955 0.17 -0.0380886" rpy="-1.57 0 0" />
         <parent link="base_link" />
         <child link="rl_castor_link" />
@@ -218,7 +218,7 @@
             </collision>
         </link>
 
-        <joint name="fl_wheel" type="continuous">
+        <joint name="fl_wheel" type="fixed">
             <parent link="fl_castor_link"/>
             <child link="fl_wheel_link"/>
              <dynamics damping="0.0" friction="0.0"/>
@@ -247,7 +247,7 @@
             </collision>
         </link>
 
-        <joint name="fr_wheel" type="continuous">
+        <joint name="fr_wheel" type="fixed">
             <parent link="fr_castor_link"/>
             <child link="fr_wheel_link"/>
             <dynamics damping="0.0" friction="0.0"/>
@@ -277,7 +277,7 @@
             </collision>
         </link>
 
-        <joint name="rr_wheel" type="continuous">
+        <joint name="rr_wheel" type="fixed">
             <parent link="rr_castor_link"/>
             <child link="rr_wheel_link"/>
             <dynamics damping="0.0" friction="0.0"/>
@@ -306,7 +306,7 @@
             </collision>
         </link>
 
-        <joint name="rl_wheel" type="continuous">
+        <joint name="rl_wheel" type="fixed">
             <parent link="rl_castor_link"/>
             <child link="rl_wheel_link"/>
             <dynamics damping="0.0" friction="0.0"/>
@@ -767,7 +767,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="fl_joint7" type="prismatic">
+    <joint name="fl_joint7" type="revolute">
         <origin xyz="0.073574 0.024629 0" rpy="0 0 0" />
         <parent link="fl_link6" />
         <child link="fl_link7" />
@@ -796,7 +796,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="fl_joint8" type="prismatic">
+    <joint name="fl_joint8" type="revolute">
         <origin xyz="0.073574 -0.024629 0" rpy="0 0 0" />
         <parent link="fl_link6" />
         <child link="fl_link8" />
@@ -1060,7 +1060,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="fr_joint7" type="prismatic">
+    <joint name="fr_joint7" type="revolute">
         <origin xyz="0.073574 0.024629 0" rpy="0 0 0" />
         <parent link="fr_link6" />
         <child link="fr_link7" />
@@ -1089,7 +1089,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="fr_joint8" type="prismatic">
+    <joint name="fr_joint8" type="revolute">
         <origin xyz="0.073574 -0.024629 0" rpy="0 0 0" />
         <parent link="fr_link6" />
         <child link="fr_link8" />
@@ -1148,7 +1148,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="lr_joint1" type="revolute">
+    <joint name="lr_joint1" type="fixed">
         <origin xyz="0 0 0.0603" rpy="0 0 0" />
         <parent link="lr_base_link" />
         <child link="lr_link1" />
@@ -1177,7 +1177,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="lr_joint2" type="revolute">
+    <joint name="lr_joint2" type="fixed">
         <origin xyz="0.02 0 0.0402" rpy="0 0 0" />
         <parent link="lr_link1" />
         <child link="lr_link2" />
@@ -1207,7 +1207,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="lr_joint3" type="revolute">
+    <joint name="lr_joint3" type="fixed">
         <origin xyz="-0.264 0 0" rpy="-3.1416 0 0" />
         <parent link="lr_link2" />
         <child link="lr_link3" />
@@ -1237,7 +1237,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="lr_joint4" type="revolute">
+    <joint name="lr_joint4" type="fixed">
         <origin xyz="0.245 0 -0.056" rpy="0 0 0" />
         <parent link="lr_link3" />
         <child link="lr_link4" />
@@ -1266,7 +1266,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="lr_joint5" type="revolute">
+    <joint name="lr_joint5" type="fixed">
         <origin xyz="0.06575 -0.001 -0.0825" rpy="0 0 0" />
         <parent link="lr_link4" />
         <child link="lr_link5" />
@@ -1295,7 +1295,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="lr_joint6" type="revolute">
+    <joint name="lr_joint6" type="fixed">
         <origin xyz="0.02845 0 0.0825" rpy="-3.1416 0 0" />
         <parent link="lr_link5" />
         <child link="lr_link6" />
@@ -1324,7 +1324,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="lr_joint7" type="prismatic">
+    <joint name="lr_joint7" type="fixed">
         <origin xyz="0.073574 0.024629 0" rpy="0 0 0" />
         <parent link="lr_link6" />
         <child link="lr_link7" />
@@ -1353,7 +1353,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="lr_joint8" type="prismatic">
+    <joint name="lr_joint8" type="fixed">
         <origin xyz="0.073574 -0.024629 0" rpy="0 0 0" />
         <parent link="lr_link6" />
         <child link="lr_link8" />
@@ -1412,7 +1412,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="rr_joint1" type="revolute">
+    <joint name="rr_joint1" type="fixed">
         <origin xyz="0 0 0.0603" rpy="0 0 0" />
         <parent link="rr_base_link" />
         <child link="rr_link1" />
@@ -1441,7 +1441,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="rr_joint2" type="revolute">
+    <joint name="rr_joint2" type="fixed">
         <origin xyz="0.02 0 0.0402" rpy="0 0 0" />
         <parent link="rr_link1" />
         <child link="rr_link2" />
@@ -1470,7 +1470,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="rr_joint3" type="revolute">
+    <joint name="rr_joint3" type="fixed">
         <origin xyz="-0.264 0 0" rpy="-3.1416 0 0" />
         <parent link="rr_link2" />
         <child link="rr_link3" />
@@ -1499,7 +1499,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="rr_joint4" type="revolute">
+    <joint name="rr_joint4" type="fixed">
         <origin xyz="0.245 0 -0.056" rpy="0 0 0" />
         <parent link="rr_link3" />
         <child link="rr_link4" />
@@ -1528,7 +1528,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="rr_joint5" type="revolute">
+    <joint name="rr_joint5" type="fixed">
         <origin xyz="0.06575 -0.001 -0.0825" rpy="0 0 0" />
         <parent link="rr_link4" />
         <child link="rr_link5" />
@@ -1557,7 +1557,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="rr_joint6" type="revolute">
+    <joint name="rr_joint6" type="fixed">
         <origin xyz="0.02845 0 0.0825" rpy="-3.1416 0 0" />
         <parent link="rr_link5" />
         <child link="rr_link6" />
@@ -1586,7 +1586,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="rr_joint7" type="prismatic">
+    <joint name="rr_joint7" type="fixed">
         <origin xyz="0.073574 0.024629 0" rpy="0 0 0" />
         <parent link="rr_link6" />
         <child link="rr_link7" />
@@ -1615,7 +1615,7 @@
             </geometry>
         </collision>
     </link>
-    <joint name="rr_joint8" type="prismatic">
+    <joint name="rr_joint8" type="fixed">
         <origin xyz="0.073574 -0.024629 0" rpy="0 0 0" />
         <parent link="rr_link6" />
         <child link="rr_link8" />
