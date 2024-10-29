@@ -16,7 +16,13 @@ from mani_skill2_real2sim.utils.sapien_utils import check_urdf_config, parse_urd
 
 class ARX5(BaseAgent):
     def _after_init(self):
-        return super()._after_init()
+        self.fingers = {
+            "fl": [],
+            "fr": [],
+        }
+        for prefix in ["fl", "fr"]:
+            for i in range(7, 9):
+                self.fingers[prefix].append(get_entity_by_name(self.robot.get_links(), f"{prefix}_link{i}"))
 
     def get_gripper_closedness(self):
         raise NotImplementedError
@@ -24,8 +30,21 @@ class ARX5(BaseAgent):
     def get_fingers_info(self):
         raise NotImplementedError
     
-    def check_grasp(self):
-        raise NotImplementedError
+    def check_grasp(self, actor: sapien.ActorBase, min_impulse=1e-6, max_angle=85):
+        assert isinstance(actor, sapien.ActorBase), type(actor)
+        contacts = self.scene.get_contacts()
+        for prefix in ["fl", "fr"]:
+            flag = True
+            for finger in self.fingers[prefix]:
+                impulse = get_pairwise_contact_impulse(contacts, finger, actor)
+                direction = finger.pose.to_transformation_matrix()[:3, 1]
+                angle = compute_angle_between(direction, impulse)
+                flag = np.linalg.norm(impulse) >= min_impulse and np.rad2deg(angle) <= max_angle
+                if not flag:
+                    break
+            if flag:
+                return True
+        return False
     
     def check_contact_fingers(self, actor: sapien.ActorBase, min_impulse=1e-6):
         raise NotImplementedError

@@ -92,8 +92,8 @@ class ARX5DefaultConfig:
         controller_configs = dict(
             pd_ee_target_delta_pose=dict(
                 left_arm=arms_pd_ee_target_delta_pose[0],
-                right_arm=arms_pd_ee_target_delta_pose[1],
                 left_gripper=grippers_pd_jonit_pos[0],
+                right_arm=arms_pd_ee_target_delta_pose[1],
                 right_gripper=grippers_pd_jonit_pos[1],
             )
         )
