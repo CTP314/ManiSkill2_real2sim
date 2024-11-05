@@ -162,7 +162,7 @@ class CustomSceneEnv(BaseEnv):
             elif 'widowx' in self.robot_uid:
                 scene_offset = np.array([-2.0634, -2.8313, 0.0])# corresponds to the default offset of bridge_table_1_v1.glb
             elif 'arx5' in self.robot_uid:
-                scene_offset = np.array([0, 0, 0])
+                scene_offset = np.array([-1.25, -2.8, 0.0])
             else:
                 raise NotImplementedError(f"Default scene offset for {self.robot_uid} is not yet set")
         else:
