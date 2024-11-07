@@ -446,6 +446,20 @@ class CustomSceneEnv(BaseEnv):
         # whether the current subtask is the final one, only meaningful for long-horizon tasks
         return True
     
+    def get_language_instruction(self):
+        raise NotImplementedError("get_language_instruction is not implemented for this environment.")
+    
+    def get_language_instruction_with_template(self, template):
+        instruction = self.get_language_instruction()
+        if template is None or template == "None":
+            return instruction
+        else:
+            if 'task' in template:
+                return template.format(task=instruction)
+            elif 'object' in template:
+                object = self._get_instruction_obj_name(self.obj.name)
+                return template.format(object=object)
+    
     
     
 # ---------------------------------------------------------------------------- #
