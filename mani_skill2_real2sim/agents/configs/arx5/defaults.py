@@ -65,9 +65,21 @@ class ARX5DefaultConfig:
     def controllers(self):
 
         # Make a deepcopy in case users modify any config
+        arms_pd_joint_pos = []
         arms_pd_ee_target_delta_pose = []
         grippers_pd_jonit_pos = []
         for prefix in ["fl", "fr"]:
+            arms_pd_joint_pos.append(
+                PDJointPosControllerConfig(
+                    self.arm_joints_dict[prefix],
+                    None,
+                    None,
+                    self.arm_stiffness,
+                    self.arm_damping,
+                    self.arm_force_limit,
+                    normalize_action=False,
+                )
+            )
             arms_pd_ee_target_delta_pose.append(
                 PDEEPoseControllerConfig(
                     self.arm_joints_dict[prefix],
@@ -90,6 +102,12 @@ class ARX5DefaultConfig:
                 )
             )
         controller_configs = dict(
+            pd_joint_pos=dict(
+                left_arm=arms_pd_joint_pos[0],
+                left_gripper=grippers_pd_jonit_pos[0],
+                right_arm=arms_pd_joint_pos[1],
+                right_gripper=grippers_pd_jonit_pos[1],
+            ),
             pd_ee_target_delta_pose=dict(
                 left_arm=arms_pd_ee_target_delta_pose[0],
                 left_gripper=grippers_pd_jonit_pos[0],
